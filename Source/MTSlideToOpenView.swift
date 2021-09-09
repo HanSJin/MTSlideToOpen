@@ -1,126 +1,125 @@
 //
-//  MTSlideToOpenControl.swift
-//  MTSlideToOpen
+//  MTSlideToOpenView.swift
+//  driver
 //
-//  Created by Martin Lee on 10/12/17.
-//  Copyright © 2017 Martin Le. All rights reserved.
+//  Created by SJin Han on 2021/09/08.
 //
 
 import UIKit
 
-@objc public protocol MTSlideToOpenDelegate {
+@objc protocol MTSlideToOpenDelegate {
     func mtSlideToOpenDelegateDidFinish(_ sender: MTSlideToOpenView)
 }
 
-@objcMembers public class MTSlideToOpenView: UIView {
+@objcMembers class MTSlideToOpenView: UIView {
     // MARK: All Views
-    public let textLabel: UILabel = {
-        let label = UILabel.init()
-        return label
-    }()
-    public let sliderTextLabel: UILabel = {
+    let animatedMaskLabel = AnimatedMaskLabel()
+    let sliderTextLabel: UILabel = {
         let label = UILabel()
         return label
     }()
-    public let thumnailImageView: UIImageView = {
+    let thumnailImageView: UIImageView = {
         let view = MTRoundImageView()
-        view.isUserInteractionEnabled = true        
+        view.isUserInteractionEnabled = true
         view.contentMode = .center
         return view
     }()
-    public let sliderHolderView: UIView = {
+    let sliderHolderView: UIView = {
         let view = UIView()
         return view
     }()
-    public let draggedView: UIView = {
+    let draggedView: UIView = {
         let view = UIView()
         return view
     }()
-    public let view: UIView = {
+    let containerView: UIView = {
         let view = UIView()
         return view
     }()
-    // MARK: Public properties
-    public weak var delegate: MTSlideToOpenDelegate?
-    public var animationVelocity: Double = 0.2
-    public var sliderViewTopDistance: CGFloat = 8.0 {
+    
+    // MARK: properties
+    weak var delegate: MTSlideToOpenDelegate?
+    var animationVelocity: Double = 0.2
+    var sliderViewTopDistance: CGFloat = 8.0 {
         didSet {
             topSliderConstraint?.constant = sliderViewTopDistance
             layoutIfNeeded()
         }
     }
-    public var thumbnailViewTopDistance: CGFloat = 0.0 {
+    var thumbnailViewTopDistance: CGFloat = 0.0 {
         didSet {
             topThumbnailViewConstraint?.constant = thumbnailViewTopDistance
             layoutIfNeeded()
         }
     }
-    public var thumbnailViewStartingDistance: CGFloat = 0.0 {
+    var thumbnailViewStartingDistance: CGFloat = 0.0 {
         didSet {
             leadingThumbnailViewConstraint?.constant = thumbnailViewStartingDistance
             trailingDraggedViewConstraint?.constant = thumbnailViewStartingDistance
             setNeedsLayout()
         }
     }
-    public var textLabelLeadingDistance: CGFloat = 0 {
+    var textLabelLeadingDistance: CGFloat = 0 {
         didSet {
             leadingTextLabelConstraint?.constant = textLabelLeadingDistance
             setNeedsLayout()
         }
     }
-    public var isEnabled:Bool = true {
+    var isEnabled:Bool = true {
         didSet {
             animationChangedEnabledBlock?(isEnabled)
         }
     }
-    public var showSliderText:Bool = false {
+    var showSliderText:Bool = false {
         didSet {
             sliderTextLabel.isHidden = !showSliderText
         }
     }
-    public var animationChangedEnabledBlock:((Bool) -> Void)?
+    var animationChangedEnabledBlock:((Bool) -> Void)?
+    
     // MARK: Default styles
-    public var sliderCornerRadius: CGFloat = 30.0 {
+    var sliderCornerRadius: CGFloat = 30.0 {
         didSet {
             sliderHolderView.layer.cornerRadius = sliderCornerRadius
             draggedView.layer.cornerRadius = sliderCornerRadius
         }
     }
-    public var sliderBackgroundColor: UIColor = UIColor(red:0.1, green:0.61, blue:0.84, alpha:0.1) {
+    var sliderBackgroundColor: UIColor = UIColor(red:0.1, green:0.61, blue:0.84, alpha:0.1) {
         didSet {
             sliderHolderView.backgroundColor = sliderBackgroundColor
             sliderTextLabel.textColor = sliderBackgroundColor
         }
     }
     
-    public var textColor:UIColor = UIColor(red:25.0/255, green:155.0/255, blue:215.0/255, alpha:0.7) {
+    var textColor:UIColor = UIColor(red:25.0/255, green:155.0/255, blue:215.0/255, alpha:0.7) {
         didSet {
-            textLabel.textColor = textColor
+            animatedMaskLabel.textColor = textColor
         }
     }
     
-    public var slidingColor:UIColor = UIColor(red:25.0/255, green:155.0/255, blue:215.0/255, alpha:0.7) {
+    var slidingColor:UIColor = UIColor(red:25.0/255, green:155.0/255, blue:215.0/255, alpha:0.7) {
         didSet {
             draggedView.backgroundColor = slidingColor
         }
     }
-    public var thumbnailColor:UIColor = UIColor(red:25.0/255, green:155.0/255, blue:215.0/255, alpha:1) {
+    var thumbnailColor:UIColor = UIColor(red:25.0/255, green:155.0/255, blue:215.0/255, alpha:1) {
         didSet {
             thumnailImageView.backgroundColor = thumbnailColor
         }
     }
-    public var labelText: String = "Swipe to open" {
+    var labelText: String = "Swipe to open" {
         didSet {
-            textLabel.text = labelText
+            animatedMaskLabel.text = labelText
             sliderTextLabel.text = labelText
         }
     }
-    public var textFont: UIFont = UIFont.systemFont(ofSize: 15.0) {
+    var textFont: UIFont = UIFont.systemFont(ofSize: 15.0) {
         didSet {
-            textLabel.font = textFont
+            animatedMaskLabel.font = textFont
             sliderTextLabel.font = textFont
         }
     }
+    
     // MARK: Private Properties
     private var leadingThumbnailViewConstraint: NSLayoutConstraint?
     private var leadingTextLabelConstraint: NSLayoutConstraint?
@@ -130,30 +129,30 @@ import UIKit
     private var xPositionInThumbnailView: CGFloat = 0
     private var xEndingPoint: CGFloat {
         get {
-            return (self.view.frame.maxX - thumnailImageView.bounds.width - thumbnailViewStartingDistance)
+            return (self.containerView.frame.maxX - thumnailImageView.bounds.width - thumbnailViewStartingDistance)
         }
     }
     private var isFinished: Bool = false
     
-    override public init(frame: CGRect) {
+    override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
     }
     private var panGestureRecognizer: UIPanGestureRecognizer!
     
-    required public init?(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)!
-        setupView()        
+        setupView()
     }
     
     private func setupView() {
-        self.addSubview(view)
-        view.addSubview(thumnailImageView)
-        view.addSubview(sliderHolderView)
-        view.addSubview(draggedView)
+        self.addSubview(containerView)
+        containerView.addSubview(thumnailImageView)
+        containerView.addSubview(sliderHolderView)
+        containerView.addSubview(draggedView)
         draggedView.addSubview(sliderTextLabel)
-        sliderHolderView.addSubview(textLabel)
-        view.bringSubviewToFront(self.thumnailImageView)
+        sliderHolderView.addSubview(animatedMaskLabel)
+        containerView.bringSubviewToFront(self.thumnailImageView)
         setupConstraint()
         setStyle()
         // Add pan gesture
@@ -163,41 +162,41 @@ import UIKit
     }
     
     private func setupConstraint() {
-        view.translatesAutoresizingMaskIntoConstraints = false
+        containerView.translatesAutoresizingMaskIntoConstraints = false
         thumnailImageView.translatesAutoresizingMaskIntoConstraints = false
         sliderHolderView.translatesAutoresizingMaskIntoConstraints = false
-        textLabel.translatesAutoresizingMaskIntoConstraints = false
+        animatedMaskLabel.translatesAutoresizingMaskIntoConstraints = false
         sliderTextLabel.translatesAutoresizingMaskIntoConstraints = false
         draggedView.translatesAutoresizingMaskIntoConstraints = false
         // Setup for view
-        view.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
-        view.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
-        view.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        view.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
+        containerView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
+        containerView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        containerView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         // Setup for circle View
-        leadingThumbnailViewConstraint = thumnailImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor)
+        leadingThumbnailViewConstraint = thumnailImageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor)
         leadingThumbnailViewConstraint?.isActive = true
-        topThumbnailViewConstraint = thumnailImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: thumbnailViewTopDistance)
+        topThumbnailViewConstraint = thumnailImageView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: thumbnailViewTopDistance)
         topThumbnailViewConstraint?.isActive = true
-        thumnailImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        thumnailImageView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
         thumnailImageView.heightAnchor.constraint(equalTo: thumnailImageView.widthAnchor).isActive = true
         // Setup for slider holder view
-        topSliderConstraint = sliderHolderView.topAnchor.constraint(equalTo: view.topAnchor, constant: sliderViewTopDistance)
+        topSliderConstraint = sliderHolderView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: sliderViewTopDistance)
         topSliderConstraint?.isActive = true
-        sliderHolderView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        sliderHolderView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        sliderHolderView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        sliderHolderView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        sliderHolderView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
+        sliderHolderView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor).isActive = true
         // Setup for textLabel
-        textLabel.topAnchor.constraint(equalTo: sliderHolderView.topAnchor).isActive = true
-        textLabel.centerYAnchor.constraint(equalTo: sliderHolderView.centerYAnchor).isActive = true
-        leadingTextLabelConstraint = textLabel.leadingAnchor.constraint(equalTo: sliderHolderView.leadingAnchor, constant: textLabelLeadingDistance)
+        animatedMaskLabel.topAnchor.constraint(equalTo: sliderHolderView.topAnchor).isActive = true
+        animatedMaskLabel.centerYAnchor.constraint(equalTo: sliderHolderView.centerYAnchor).isActive = true
+        leadingTextLabelConstraint = animatedMaskLabel.leadingAnchor.constraint(equalTo: sliderHolderView.leadingAnchor, constant: textLabelLeadingDistance)
         leadingTextLabelConstraint?.isActive = true
-        textLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: CGFloat(-8)).isActive = true
+        animatedMaskLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: CGFloat(-8)).isActive = true
         // Setup for sliderTextLabel
-        sliderTextLabel.topAnchor.constraint(equalTo: textLabel.topAnchor).isActive = true
-        sliderTextLabel.centerYAnchor.constraint(equalTo: textLabel.centerYAnchor).isActive = true
-        sliderTextLabel.leadingAnchor.constraint(equalTo: textLabel.leadingAnchor).isActive = true
-        sliderTextLabel.trailingAnchor.constraint(equalTo: textLabel.trailingAnchor).isActive = true
+        sliderTextLabel.topAnchor.constraint(equalTo: animatedMaskLabel.topAnchor).isActive = true
+        sliderTextLabel.centerYAnchor.constraint(equalTo: animatedMaskLabel.centerYAnchor).isActive = true
+        sliderTextLabel.leadingAnchor.constraint(equalTo: animatedMaskLabel.leadingAnchor).isActive = true
+        sliderTextLabel.trailingAnchor.constraint(equalTo: animatedMaskLabel.trailingAnchor).isActive = true
         // Setup for Dragged View
         draggedView.leadingAnchor.constraint(equalTo: sliderHolderView.leadingAnchor).isActive = true
         draggedView.topAnchor.constraint(equalTo: sliderHolderView.topAnchor).isActive = true
@@ -208,10 +207,10 @@ import UIKit
     
     private func setStyle() {
         thumnailImageView.backgroundColor = thumbnailColor
-        textLabel.text = labelText
-        textLabel.font = textFont
-        textLabel.textColor = textColor
-        textLabel.textAlignment = .center
+        animatedMaskLabel.text = labelText
+        animatedMaskLabel.font = textFont
+        animatedMaskLabel.textColor = textColor
+        animatedMaskLabel.textAlignment = .center
 
         sliderTextLabel.text = labelText
         sliderTextLabel.font = textFont
@@ -220,7 +219,7 @@ import UIKit
         sliderTextLabel.isHidden = !showSliderText
         
         if isOnRightToLeftLanguage() {
-            textLabel.mt_flipView()
+            animatedMaskLabel.mt_flipView()
             sliderTextLabel.mt_flipView()
         }
 
@@ -236,7 +235,7 @@ import UIKit
         return self.thumnailImageView.frame.contains(point)
     }
     
-    private func updateThumbnailXPosition(_ x: CGFloat) {
+    private func updateThumbnailXPosition(_ x: CGFloat, _ animated: Bool = false) {
         leadingThumbnailViewConstraint?.constant = x
         setNeedsLayout()
     }
@@ -246,7 +245,7 @@ import UIKit
         if isFinished || !isEnabled {
             return
         }
-        let translatedPoint = sender.translation(in: view).x * (self.isOnRightToLeftLanguage() ? -1 : 1)
+        let translatedPoint = sender.translation(in: containerView).x * (self.isOnRightToLeftLanguage() ? -1 : 1)
         switch sender.state {
         case .began:
             break
@@ -256,30 +255,39 @@ import UIKit
                 return
             }
             if translatedPoint <= thumbnailViewStartingDistance {
-                textLabel.alpha = 1
+                animatedMaskLabel.alpha = 1
                 updateThumbnailXPosition(thumbnailViewStartingDistance)
                 return
             }
             updateThumbnailXPosition(translatedPoint)
-            textLabel.alpha = (xEndingPoint - translatedPoint) / xEndingPoint
+            animatedMaskLabel.alpha = (xEndingPoint - translatedPoint) / xEndingPoint
             break
         case .ended:
-            if translatedPoint >= xEndingPoint {
-                textLabel.alpha = 0
+            let velocity = sender.velocity(in: containerView).x
+            let velocityWeight: CGFloat = velocity > 100 ? 0.8 : 0.95
+            
+            if translatedPoint >= xEndingPoint * velocityWeight {
+                animatedMaskLabel.alpha = 0
                 updateThumbnailXPosition(xEndingPoint)
+                
                 // Finish action
                 isFinished = true
                 delegate?.mtSlideToOpenDelegateDidFinish(self)
+                
+                UIView.animate(withDuration: animationVelocity) {
+                    self.leadingThumbnailViewConstraint?.constant = (self.xEndingPoint)
+                    self.layoutIfNeeded()
+                }
                 return
             }
             if translatedPoint <= thumbnailViewStartingDistance {
-                textLabel.alpha = 1
+                animatedMaskLabel.alpha = 1
                 updateThumbnailXPosition(thumbnailViewStartingDistance)
                 return
             }
             UIView.animate(withDuration: animationVelocity) {
                 self.leadingThumbnailViewConstraint?.constant = self.thumbnailViewStartingDistance
-                self.textLabel.alpha = 1
+                self.animatedMaskLabel.alpha = 1
                 self.layoutIfNeeded()
             }
             break
@@ -287,11 +295,12 @@ import UIKit
             break
         }
     }
+    
     // Others
-    public func resetStateWithAnimation(_ animated: Bool) {
+    func resetStateWithAnimation(_ animated: Bool) {
         let action = {
             self.leadingThumbnailViewConstraint?.constant = self.thumbnailViewStartingDistance
-            self.textLabel.alpha = 1
+            self.animatedMaskLabel.alpha = 1
             self.layoutIfNeeded()
             //
             self.isFinished = false

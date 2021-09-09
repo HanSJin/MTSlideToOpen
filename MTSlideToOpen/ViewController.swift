@@ -61,7 +61,7 @@ class ViewController: UIViewController, MTSlideToOpenDelegate {
                 slide.thumnailImageView.backgroundColor = slide.thumbnailColor
                 slide.draggedView.isHidden = false
                 slide.thumnailImageView.backgroundColor = slide.sliderBackgroundColor
-                slide.textLabel.text = slide.labelText
+                slide.sliderTextLabel.text = slide.labelText
                 slide.thumnailImageView.layer.shadowOpacity = 0
             } else {
                 slide.thumnailImageView.backgroundColor = UIColor(red:210.0/255, green:219.0/255, blue:228.0/255, alpha:0.8)
@@ -71,7 +71,7 @@ class ViewController: UIViewController, MTSlideToOpenDelegate {
                 slide.thumnailImageView.layer.shadowOpacity = 1
                 slide.draggedView.isHidden = true
                 slide.sliderHolderView.backgroundColor = UIColor(red:245.0/255, green:247.0/255, blue:250.0/255, alpha:1)
-                slide.textLabel.text = ""
+                slide.sliderTextLabel.text = ""
             }
         }
         slide.isEnabled = false
