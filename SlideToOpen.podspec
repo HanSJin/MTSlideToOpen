@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
   # ―――  Spec Metadata  ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
   #
 
-  s.name         = "MTSlideToOpen"
+  s.name         = "SlideToOpen"
   s.version      = "2.0.1"
   s.summary      = "A simple SlideToUnlock iOS UI component."
 
@@ -37,7 +37,7 @@ Pod::Spec.new do |s|
   # ――― Source Location ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
   #
 
-  s.source       = { :git => "https://github.com/HanSJin/MTSlideToOpen.git", :tag => s.version }
+  s.source       = { :git => "https://github.com/HanSJin/SlideToOpen.git", :tag => s.version }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
