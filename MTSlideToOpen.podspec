@@ -4,7 +4,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "MTSlideToOpen"
-  s.version      = "1.5.1"
+  s.version      = "2.0.1"
   s.summary      = "A simple SlideToUnlock iOS UI component."
 
   s.description  = "A simple iOS UI component acts Slide To Unlock."
@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
   # ――― Author Metadata  ――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
   #
 
-  s.author             = { "Tien Le" => "lemanhtien.bka@gmail.com" }
+  s.author             = { "HanSJin" => "kksd9900@naver.com" }
   s.social_media_url   = "https://twitter.com/Martin_ManhTien"
 
   # ――― Platform Specifics ――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
@@ -37,7 +37,7 @@ Pod::Spec.new do |s|
   # ――― Source Location ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
   #
 
-  s.source       = { :git => "https://github.com/lemanhtien/MTSlideToOpen.git", :tag => s.version }
+  s.source       = { :git => "https://github.com/HanSJin/MTSlideToOpen.git", :tag => s.version }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
