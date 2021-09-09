@@ -8,7 +8,7 @@
 import UIKit
 import QuartzCore
 
-class AnimatedMaskLabel: UIView {
+public class AnimatedMaskLabel: UIView {
 
     var textColor: UIColor = .black {
         didSet {
@@ -69,7 +69,7 @@ class AnimatedMaskLabel: UIView {
         ]
     }
 
-    override func layoutSubviews() {
+    override public func layoutSubviews() {
         gradientLayer.frame = CGRect(
             x: -bounds.size.width,
             y: bounds.origin.y,
@@ -78,7 +78,7 @@ class AnimatedMaskLabel: UIView {
         update()
     }
 
-    override func didMoveToWindow() {
+    override public func didMoveToWindow() {
         super.didMoveToWindow()
 
         layer.addSublayer(gradientLayer)

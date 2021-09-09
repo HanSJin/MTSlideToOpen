@@ -7,113 +7,113 @@
 
 import UIKit
 
-@objc protocol MTSlideToOpenDelegate {
+@objc public protocol MTSlideToOpenDelegate {
     func mtSlideToOpenDelegateDidFinish(_ sender: MTSlideToOpenView)
 }
 
-@objcMembers class MTSlideToOpenView: UIView {
+@objcMembers public class MTSlideToOpenView: UIView {
     // MARK: All Views
-    let animatedMaskLabel = AnimatedMaskLabel()
-    let sliderTextLabel: UILabel = {
+    public let animatedMaskLabel = AnimatedMaskLabel()
+    public let sliderTextLabel: UILabel = {
         let label = UILabel()
         return label
     }()
-    let thumnailImageView: UIImageView = {
+    public let thumnailImageView: UIImageView = {
         let view = MTRoundImageView()
         view.isUserInteractionEnabled = true
         view.contentMode = .center
         return view
     }()
-    let sliderHolderView: UIView = {
+    public let sliderHolderView: UIView = {
         let view = UIView()
         return view
     }()
-    let draggedView: UIView = {
+    public let draggedView: UIView = {
         let view = UIView()
         return view
     }()
-    let containerView: UIView = {
+    public let containerView: UIView = {
         let view = UIView()
         return view
     }()
     
     // MARK: properties
-    weak var delegate: MTSlideToOpenDelegate?
-    var animationVelocity: Double = 0.2
-    var sliderViewTopDistance: CGFloat = 8.0 {
+    public weak var delegate: MTSlideToOpenDelegate?
+    public var animationVelocity: Double = 0.2
+    public var sliderViewTopDistance: CGFloat = 8.0 {
         didSet {
             topSliderConstraint?.constant = sliderViewTopDistance
             layoutIfNeeded()
         }
     }
-    var thumbnailViewTopDistance: CGFloat = 0.0 {
+    public var thumbnailViewTopDistance: CGFloat = 0.0 {
         didSet {
             topThumbnailViewConstraint?.constant = thumbnailViewTopDistance
             layoutIfNeeded()
         }
     }
-    var thumbnailViewStartingDistance: CGFloat = 0.0 {
+    public var thumbnailViewStartingDistance: CGFloat = 0.0 {
         didSet {
             leadingThumbnailViewConstraint?.constant = thumbnailViewStartingDistance
             trailingDraggedViewConstraint?.constant = thumbnailViewStartingDistance
             setNeedsLayout()
         }
     }
-    var textLabelLeadingDistance: CGFloat = 0 {
+    public var textLabelLeadingDistance: CGFloat = 0 {
         didSet {
             leadingTextLabelConstraint?.constant = textLabelLeadingDistance
             setNeedsLayout()
         }
     }
-    var isEnabled:Bool = true {
+    public var isEnabled:Bool = true {
         didSet {
             animationChangedEnabledBlock?(isEnabled)
         }
     }
-    var showSliderText:Bool = false {
+    public var showSliderText:Bool = false {
         didSet {
             sliderTextLabel.isHidden = !showSliderText
         }
     }
-    var animationChangedEnabledBlock:((Bool) -> Void)?
+    public var animationChangedEnabledBlock:((Bool) -> Void)?
     
     // MARK: Default styles
-    var sliderCornerRadius: CGFloat = 30.0 {
+    public var sliderCornerRadius: CGFloat = 30.0 {
         didSet {
             sliderHolderView.layer.cornerRadius = sliderCornerRadius
             draggedView.layer.cornerRadius = sliderCornerRadius
         }
     }
-    var sliderBackgroundColor: UIColor = UIColor(red:0.1, green:0.61, blue:0.84, alpha:0.1) {
+    public var sliderBackgroundColor: UIColor = UIColor(red:0.1, green:0.61, blue:0.84, alpha:0.1) {
         didSet {
             sliderHolderView.backgroundColor = sliderBackgroundColor
             sliderTextLabel.textColor = sliderBackgroundColor
         }
     }
     
-    var textColor:UIColor = UIColor(red:25.0/255, green:155.0/255, blue:215.0/255, alpha:0.7) {
+    public var textColor:UIColor = UIColor(red:25.0/255, green:155.0/255, blue:215.0/255, alpha:0.7) {
         didSet {
             animatedMaskLabel.textColor = textColor
         }
     }
     
-    var slidingColor:UIColor = UIColor(red:25.0/255, green:155.0/255, blue:215.0/255, alpha:0.7) {
+    public var slidingColor:UIColor = UIColor(red:25.0/255, green:155.0/255, blue:215.0/255, alpha:0.7) {
         didSet {
             draggedView.backgroundColor = slidingColor
         }
     }
-    var thumbnailColor:UIColor = UIColor(red:25.0/255, green:155.0/255, blue:215.0/255, alpha:1) {
+    public var thumbnailColor:UIColor = UIColor(red:25.0/255, green:155.0/255, blue:215.0/255, alpha:1) {
         didSet {
             thumnailImageView.backgroundColor = thumbnailColor
         }
     }
-    var labelText: String = "Swipe to open" {
+    public var labelText: String = "Swipe to open" {
         didSet {
             animatedMaskLabel.text = labelText
             sliderTextLabel.text = labelText
         }
     }
-    var textFont: UIFont = UIFont.systemFont(ofSize: 15.0) {
+    public var textFont: UIFont = UIFont.systemFont(ofSize: 15.0) {
         didSet {
             animatedMaskLabel.font = textFont
             sliderTextLabel.font = textFont
@@ -134,13 +134,13 @@ import UIKit
     }
     private var isFinished: Bool = false
     
-    override init(frame: CGRect) {
+    override public init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
     }
     private var panGestureRecognizer: UIPanGestureRecognizer!
     
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)!
         setupView()
     }
@@ -297,7 +297,7 @@ import UIKit
     }
     
     // Others
-    func resetStateWithAnimation(_ animated: Bool) {
+    public func resetStateWithAnimation(_ animated: Bool) {
         let action = {
             self.leadingThumbnailViewConstraint?.constant = self.thumbnailViewStartingDistance
             self.animatedMaskLabel.alpha = 1
