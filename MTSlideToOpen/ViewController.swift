@@ -83,6 +83,15 @@ class ViewController: UIViewController, MTSlideToOpenDelegate {
         self.view.addSubview(slideToOpen)
         self.view.addSubview(slideToUnlock)
         self.view.addSubview(customizeSlideToOpen)
+        
+        // Disable Test
+        DispatchQueue.main.asyncAfter(wallDeadline: .now() + .milliseconds(800)) {
+            self.customizeSlideToOpen.isEnabled = false
+        }
+        DispatchQueue.main.asyncAfter(wallDeadline: .now() + .milliseconds(2800)) {
+            self.customizeSlideToOpen.isEnabled = true
+        }
+        
         self.view.addSubview(slideToLock)
     }
     

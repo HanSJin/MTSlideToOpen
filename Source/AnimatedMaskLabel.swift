@@ -10,8 +10,18 @@ import QuartzCore
 
 public class AnimatedMaskLabel: UIView {
 
-    let animationKey = "AnimatedMaskLabelAnimationKey"
-    
+    private static let animationKey = "AnimatedMaskLabelAnimationKey"
+    private static let gradientColor = [
+        UIColor.white.cgColor,
+        UIColor.white.withAlphaComponent(0.3).cgColor,
+        UIColor.white.cgColor
+    ]
+    private static let disableGradientColor = [
+        UIColor.white.withAlphaComponent(0.5).cgColor,
+        UIColor.white.withAlphaComponent(0.5).cgColor,
+        UIColor.white.withAlphaComponent(0.5).cgColor
+    ]
+
     var textColor: UIColor = .black {
         didSet {
             setNeedsDisplay()
@@ -42,26 +52,12 @@ public class AnimatedMaskLabel: UIView {
             update()
         }
     }
-    
     private let gradientLayer: CAGradientLayer = {
         let gradientLayer = CAGradientLayer()
-
-        // Configure the gradient here
         gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
         gradientLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
-
-        let colors = [
-            UIColor.white.cgColor,
-            UIColor.white.withAlphaComponent(0.3).cgColor,
-            UIColor.white.cgColor
-        ]
-        gradientLayer.colors = colors
-
-        let locations = [
-            0.25,
-            0.5,
-            0.75
-        ]
+        gradientLayer.colors = AnimatedMaskLabel.gradientColor
+        let locations = [0.25, 0.5, 0.75]
         gradientLayer.locations = locations as [NSNumber]
 
         return gradientLayer
@@ -98,7 +94,7 @@ public class AnimatedMaskLabel: UIView {
         super.didMoveToWindow()
 
         layer.addSublayer(gradientLayer)
-        gradientLayer.add(gradientAnimation, forKey: animationKey)
+        gradientLayer.add(gradientAnimation, forKey: AnimatedMaskLabel.animationKey)
     }
 
     var sizeLabel: UILabel {
@@ -111,11 +107,13 @@ public class AnimatedMaskLabel: UIView {
     
     private func update() {
         guard isEnabled else {
-            gradientLayer.removeAnimation(forKey: animationKey)
+            gradientLayer.colors = AnimatedMaskLabel.disableGradientColor
+            gradientLayer.removeAnimation(forKey: AnimatedMaskLabel.animationKey)
             return
         }
-        if gradientLayer.animation(forKey: animationKey) == nil {
-            gradientLayer.add(gradientAnimation, forKey: animationKey)
+        if gradientLayer.animation(forKey: AnimatedMaskLabel.animationKey) == nil {
+            gradientLayer.colors = AnimatedMaskLabel.gradientColor
+            gradientLayer.add(gradientAnimation, forKey: AnimatedMaskLabel.animationKey)
         }
 
         let sizeLabel = self.sizeLabel
