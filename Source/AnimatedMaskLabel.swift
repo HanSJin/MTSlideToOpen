@@ -10,6 +10,8 @@ import QuartzCore
 
 public class AnimatedMaskLabel: UIView {
 
+    let animationKey = "AnimatedMaskLabelAnimationKey"
+    
     var textColor: UIColor = .black {
         didSet {
             setNeedsDisplay()
@@ -29,6 +31,12 @@ public class AnimatedMaskLabel: UIView {
         }
     }
     var text: String! {
+        didSet {
+            setNeedsDisplay()
+            update()
+        }
+    }
+    var isEnabled: Bool = true {
         didSet {
             setNeedsDisplay()
             update()
@@ -58,7 +66,15 @@ public class AnimatedMaskLabel: UIView {
 
         return gradientLayer
     }()
-
+    private let gradientAnimation: CABasicAnimation = {
+        let gradientAnimation = CABasicAnimation(keyPath: "locations")
+        gradientAnimation.fromValue = [0.0, 0.12, 0.25]
+        gradientAnimation.toValue = [0.75, 0.85, 1.0]
+        gradientAnimation.duration = 1.5
+        gradientAnimation.repeatCount = Float.infinity
+        return gradientAnimation
+    }()
+    
     private var textAttributes: [NSAttributedString.Key: AnyObject] {
         let style = NSMutableParagraphStyle()
         style.alignment = textAlignment
@@ -82,14 +98,7 @@ public class AnimatedMaskLabel: UIView {
         super.didMoveToWindow()
 
         layer.addSublayer(gradientLayer)
-
-        let gradientAnimation = CABasicAnimation(keyPath: "locations")
-        gradientAnimation.fromValue = [0.0, 0.12, 0.25]
-        gradientAnimation.toValue = [0.75, 0.85, 1.0]
-        gradientAnimation.duration = 1.5
-        gradientAnimation.repeatCount = Float.infinity
-
-        gradientLayer.add(gradientAnimation, forKey: nil)
+        gradientLayer.add(gradientAnimation, forKey: animationKey)
     }
 
     var sizeLabel: UILabel {
@@ -101,6 +110,14 @@ public class AnimatedMaskLabel: UIView {
     }
     
     private func update() {
+        guard isEnabled else {
+            gradientLayer.removeAnimation(forKey: animationKey)
+            return
+        }
+        if gradientLayer.animation(forKey: animationKey) == nil {
+            gradientLayer.add(gradientAnimation, forKey: animationKey)
+        }
+
         let sizeLabel = self.sizeLabel
         
         UIGraphicsBeginImageContextWithOptions(frame.size, false, 0)

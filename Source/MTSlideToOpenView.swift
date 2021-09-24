@@ -68,6 +68,7 @@ import UIKit
     public var isEnabled:Bool = true {
         didSet {
             animationChangedEnabledBlock?(isEnabled)
+            animatedMaskLabel.isEnabled = isEnabled
         }
     }
     public var showSliderText:Bool = false {
