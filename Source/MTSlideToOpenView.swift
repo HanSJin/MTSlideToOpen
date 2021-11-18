@@ -95,6 +95,7 @@ import UIKit
     public var textColor:UIColor = UIColor(red:25.0/255, green:155.0/255, blue:215.0/255, alpha:0.7) {
         didSet {
             animatedMaskLabel.textColor = textColor
+            sliderTextLabel.text = labelText
         }
     }
     

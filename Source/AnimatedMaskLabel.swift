@@ -17,9 +17,9 @@ public class AnimatedMaskLabel: UIView {
         UIColor.white.cgColor
     ]
     private static let disableGradientColor = [
-        UIColor.white.withAlphaComponent(0.5).cgColor,
-        UIColor.white.withAlphaComponent(0.5).cgColor,
-        UIColor.white.withAlphaComponent(0.5).cgColor
+        UIColor.white.cgColor,
+        UIColor.white.cgColor,
+        UIColor.white.cgColor,
     ]
 
     var textColor: UIColor = .black {
@@ -106,16 +106,11 @@ public class AnimatedMaskLabel: UIView {
     }
     
     private func update() {
-        guard isEnabled else {
-            gradientLayer.colors = AnimatedMaskLabel.disableGradientColor
-            gradientLayer.removeAnimation(forKey: AnimatedMaskLabel.animationKey)
-            return
-        }
         if gradientLayer.animation(forKey: AnimatedMaskLabel.animationKey) == nil {
-            gradientLayer.colors = AnimatedMaskLabel.gradientColor
             gradientLayer.add(gradientAnimation, forKey: AnimatedMaskLabel.animationKey)
         }
-
+        gradientLayer.colors = isEnabled ? AnimatedMaskLabel.gradientColor : AnimatedMaskLabel.disableGradientColor
+        
         let sizeLabel = self.sizeLabel
         
         UIGraphicsBeginImageContextWithOptions(frame.size, false, 0)
