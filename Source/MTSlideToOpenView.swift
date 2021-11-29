@@ -121,6 +121,8 @@ import UIKit
             sliderTextLabel.font = textFont
         }
     }
+    // 드래깅과 함께 animatedMaskLabel 이 투명해짐
+    public var transparentAnimatedMaskLabel = true
     
     // MARK: Private Properties
     private var leadingThumbnailViewConstraint: NSLayoutConstraint?
@@ -262,14 +264,14 @@ import UIKit
                 return
             }
             updateThumbnailXPosition(translatedPoint)
-            animatedMaskLabel.alpha = (xEndingPoint - translatedPoint) / xEndingPoint
+            animatedMaskLabel.alpha = transparentAnimatedMaskLabel ? (xEndingPoint - translatedPoint) / xEndingPoint : 1
             break
         case .ended:
             let velocity = sender.velocity(in: containerView).x
             let velocityWeight: CGFloat = velocity > 100 ? 0.8 : 0.95
             
             if translatedPoint >= xEndingPoint * velocityWeight {
-                animatedMaskLabel.alpha = 0
+                animatedMaskLabel.alpha = transparentAnimatedMaskLabel ? 0 : 1
                 updateThumbnailXPosition(xEndingPoint)
                 
                 // Finish action
