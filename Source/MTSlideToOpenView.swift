@@ -268,7 +268,7 @@ import UIKit
             break
         case .ended:
             let velocity = sender.velocity(in: containerView).x
-            let velocityWeight: CGFloat = velocity > 100 ? 0.8 : 0.95
+            let velocityWeight: CGFloat = velocity > 100 ? 0.7 : 0.9
             
             if translatedPoint >= xEndingPoint * velocityWeight {
                 animatedMaskLabel.alpha = transparentAnimatedMaskLabel ? 0 : 1
